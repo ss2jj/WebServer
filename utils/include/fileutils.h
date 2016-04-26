@@ -16,7 +16,7 @@
 *  成功返回读取到的字节数
 *    
 **/
-int FileRead(const char *filename,char *buf,size_t len);
+int FileRead(const char *filename,const char *mode,char *buf,size_t len);
 
 
 
@@ -24,7 +24,7 @@ int FileRead(const char *filename,char *buf,size_t len);
 * 将buf里的内容写入文件
 *
 **/
-int FileWrite(const char *filename,char *buf,size_t len);
+int FileWrite(const char *filename,const char *mode,char *buf,size_t len);
 
 
 /**

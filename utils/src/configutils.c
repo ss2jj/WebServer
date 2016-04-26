@@ -1,8 +1,19 @@
 #include "fileutils.h"
 #include "log.h"
+#include "configutils.h"
+#define TAG "CONFIGOPERATOR"
 
-#define TAG "FILEOPERATOR"
 
+
+int ReadConfig(const char *filename,const char * name,char *value)	{
+	if(name == NULL)	{
+		print_error(TAG,"file name is null");
+		return -1;
+	}
+	if(value == NULL)	{
+		print_error(TAG,"file name is null");
+	}
+}
 int FileRead(const char *fileName,const char *mode,char *buf,size_t len) {
     FILE *fp;
     int readSize = 0;
