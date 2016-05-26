@@ -1,4 +1,4 @@
-#include "log.h"
+#include "Log.h"
 
 
 
@@ -42,6 +42,7 @@ void print_info(char *tag,char *msg, ...)   {
     }
     
     if(tag!= NULL && msg != NULL)   {
+		rewind(stdout);
 		printf("[%s]",tag);
         vfprintf(stdout,msg,argp);	
 		printf("\n");
@@ -70,8 +71,10 @@ void print_warn(char *tag,char *msg, ...)    {
     }
     
     if(tag!= NULL && msg != NULL)   {
+		rewind(stdout);
 		printf("[%s]",tag);
         vfprintf(stdout,msg,argp);	
+		printf("\n");
     } else {
         printf("msg is null");
     }
@@ -91,8 +94,10 @@ void print_error(char *tag,char *msg, ...)   {
     }
     
     if(tag!= NULL && msg != NULL)   {
+		rewind(stdout);
 		printf("[%s]",tag);
         vfprintf(stdout,msg,argp);	
+		printf("\n");
     } else {
         printf("msg is null");
     }

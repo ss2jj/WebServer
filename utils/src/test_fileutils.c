@@ -1,11 +1,24 @@
-#include "log.h"
-#include "fileutils.h"
+#include "Log.h"
+#include "Fileutils.h"
+#include "Configutils.h"
 #include <string.h>
 
 #define FILE_NAME "test.txt"
 #define TAG "test_fileutil"
+
+
+
+static void test_file();
+static void test_config();
+
 int main(void)  {
-    char * writeBUF = "yes i am test file";
+   // test_file();
+    test_config();
+
+}
+
+static void test_file()	{
+	char * writeBUF = "a=1\r\nb=2\r\nc=3";
     char * readBUF = NULL;
     
     print_info(TAG,"test file write");
@@ -38,8 +51,15 @@ int main(void)  {
 		free(readBUF);
 		readBUF = NULL;
 	}
-     
-
 }
 
-
+static void test_config()	{
+	 char value[50];
+	 //print_info(TAG,"test file config write");
+	// WriteConfig(FILE_NAME,"testkey","testvalue");
+	// WriteConfig(FILE_NAME,"testkey1","testvalue1");
+	 //WriteConfig(FILE_NAME,"testkey","testvalue");
+	 print_info(TAG,"test file config read");
+	 ReadConfig(FILE_NAME,"adb",value);
+	 print_info(TAG,"value is %s \n",value);
+}

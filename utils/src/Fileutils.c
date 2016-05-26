@@ -1,5 +1,5 @@
-#include "fileutils.h"
-#include "log.h"
+#include "Fileutils.h"
+#include "Log.h"
 
 #define TAG "FILEOPERATOR"
 
@@ -8,6 +8,8 @@ int FileRead(const char *fileName,const char *mode,char *buf,size_t len) {
     int readSize = 0;
     int totalRead = 0;
     
+	
+
     if(fileName == NULL)    {
        print_error(TAG,"file name is null");
        return -1;
@@ -25,16 +27,17 @@ int FileRead(const char *fileName,const char *mode,char *buf,size_t len) {
     }
     
     while(feof(fp) == 0 &&  totalRead < len)  {
+		
        if((readSize = fread(buf+totalRead,1,len-totalRead,fp)) <= 0) {
             print_info(TAG,"read error or complete");
             break;   
         }
+		
         totalRead += readSize;
         
     }
-    
-    fclose(fp);
 
+    fclose(fp);
     return totalRead;
 
 }
@@ -64,6 +67,7 @@ int FileWrite(const char *fileName,const char *mode,char *buf,size_t len)    {
     while(totalWrite < len)    {
         if((writeSize = fwrite(buf+totalWrite,1,len-totalWrite,fp)) <= 0)   {
             print_info(TAG,"write error or complete");
+			break;
         }
         fflush(fp);
         totalWrite += writeSize;

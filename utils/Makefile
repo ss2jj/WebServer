@@ -3,24 +3,20 @@ RM := rm -rf
 INCLUDE = incude/
 
 
-all:so
 
 
-test_file : test_fileutils.o 
-	$(CC) test_fileutils.o  -o test_file -L ./ -lutils
 
-so : log.o fileutils.o
-	g++ -fPIC -shared -o libutils.so log.o fileutils.o
+so : log.o fileutils.o configutils.o
+	g++ -fPIC -shared -o libutils.so log.o fileutils.o configutils.o
 
-test_fileutils.o : src/test_fileutils.c  include/fileutils.h include/log.h 
-	$(CC) -c src/test_fileutils.c -I include/
+log.o : src/Log.c include/Log.h
+	$(CC) -c -fPIC src/Log.c -I include/
 
-log.o : src/log.c include/log.h
-	$(CC) -c -fPIC src/log.c -I include/
+fileutils.o : src/Fileutils.c include/Fileutils.h
+	$(CC) -c -fPIC src/Fileutils.c -I include/
 
-fileutils.o : src/fileutils.c include/fileutils.h
-	$(CC) -c -fPIC src/fileutils.c -I include/
-
- 
+configutils.o : src/Configutils.c include/Configutils.h
+	$(CC) -c -fPIC src/Configutils.c -I include/
+	
 clean :
 	$(RM) *.o test_file *.so
