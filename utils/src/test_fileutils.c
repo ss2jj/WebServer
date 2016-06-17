@@ -12,7 +12,7 @@ static void test_file();
 static void test_config();
 
 int main(void)  {
-   // test_file();
+    test_file();
     test_config();
 
 }
@@ -55,11 +55,11 @@ static void test_file()	{
 
 static void test_config()	{
 	 char value[50];
-	 //print_info(TAG,"test file config write");
-	// WriteConfig(FILE_NAME,"testkey","testvalue");
-	// WriteConfig(FILE_NAME,"testkey1","testvalue1");
-	 //WriteConfig(FILE_NAME,"testkey","testvalue");
+	 print_info(TAG,"test file config write");
+	 WriteConfig(FILE_NAME,"testkey","testvalue");
+	 WriteConfig(FILE_NAME,"testkey1","testvalue1");
+	 WriteConfig(FILE_NAME,"testkey","testvalue");
 	 print_info(TAG,"test file config read");
-	 ReadConfig(FILE_NAME,"adb",value);
+	 ReadConfig(FILE_NAME,"testkey1",value);
 	 print_info(TAG,"value is %s \n",value);
 }
