@@ -1,5 +1,7 @@
 #include "Fileutils.h"
 #include "Log.h"
+#include <sys/stat.h>
+#include <unistd.h>
 
 #define TAG "FILEOPERATOR"
 
@@ -100,4 +102,24 @@ int FileSize(const char *fileName)  {
 
     return fileLen;
 
+}
+
+int IsFileExist(const char *filename)	{
+	
+	FILE *fp;
+	struct stat buf;
+	
+	if(filename == NULL)    {                                                                                                                                   
+       print_error(TAG,"file name is null");                                                                                                                    
+       return 0;                                                                                                                                               
+    }
+          
+    if((fp = fopen(filename,"r+")) == NULL) {
+        print_error(TAG,"file open failed");                                                                                                                    
+        return 0;
+    }
+	
+	int result = fstat(fp,&buf);
+	
+	return result==0?1:0;
 }

@@ -34,8 +34,10 @@ int FileWrite(const char *filename,const char *mode,char *buf,size_t len);
 int FileSize(const char *filename);
 
 
+/**
+*指定的文件或者文件夹是否存在
+**/
 
-
-
+int IsFileExist(const char *filename);
 
 #endif

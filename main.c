@@ -11,7 +11,7 @@
 int main(int argc,char ** argv)	{
 	char port_c[50];
 	int port_i;
-	pid_t pid;
+	
     /*1 读取端口配置文件 初始化httpd进程*/
 	ReadConfig(CONFIG_PATH,PORT_NUM,port_c);
 	
@@ -22,20 +22,10 @@ int main(int argc,char ** argv)	{
 	
 	print_info(TAG,"read port is %d",port_i);
     /*3 启动httpd进程*/
-	pid = fork();
-	if(pid < -1)	{
-		print_error(TAG,"fork failed");
-		exit(1);
-	}else if(pid == 0)	{
-		print_info(TAG,"start child process");
-		// 成为守护进程
-		if (setsid() < 0) {
-			print_error(TAG,"error breaking from process group");
-		}
-		StartServer(port_i);
-	}else {
-		exit(1);//父进程退出
-	}
+	
+	StartServer(port_i);
+	
+	
 	
 	return 1;
 
