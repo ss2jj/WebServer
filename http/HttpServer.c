@@ -78,14 +78,15 @@ static void * handleHttpResponse(int fd,HttpResponse * response)	{
 static void * handleHttpRequest(int fd,struct sockaddr_in clientAddr)	{
 
 	char * data = NULL;
-	HttpRequest request;
+	HttpRequest * request;
 	HttpResponse response ;
 	
 	print_info(TAG,"HandleHttpRequest fd %d",fd);
 	data = readMessage(fd);
 	print_info(TAG,"readMessage %s",data);
 	request = parseHttpRequest(data);
-	print_info(TAG,"uri:%s  version:%s",request.uri,request.version);
+	print_info(TAG,"uri:%s  version:%s",request->uri,request->version);
+	printf("uri2:%s  version2:%s",request->uri,request->version);
 	response = generateHttpResponse(request);
 	handleHttpResponse(fd,&response);
 }
@@ -166,7 +167,7 @@ int StartServer(int port_i)	{
 }
 
 char * readMessage(int fd)	{
-	char  data[MAXLENGTH];
+	 char  data[MAXLENGTH];
 	int readSize  = 0;
 	
 	memset(data,0,MAXLENGTH); //data ÇåÁã
@@ -182,7 +183,7 @@ char * readMessage(int fd)	{
 	readSize = recv(fd, data, MAXLENGTH, 0);
 	
 
-	return data;
+	return strdup(data);
 }
 
 void writeMessage(int fd,char * data)	{
@@ -191,43 +192,50 @@ void writeMessage(int fd,char * data)	{
 	send(fd, data, size, 0);
 }
 //½âÎöHttpÇëÇó
-HttpRequest parseHttpRequest(char *data)	{
-	HttpRequest request;
+HttpRequest * parseHttpRequest(char *data)	{
+	static HttpRequest request;
 	
 	char method[LINE_MAX] = {0};
 	char uri[LINE_MAX] = {0};
 	char version[LINE_MAX] = {0};
 		
 	memset(&request, 0, sizeof(HttpRequest));
+	
 	sscanf(data, "%s %s %s", method, uri, version);
+	
 	print_info(TAG,"method:%s  uri:%s  version:%s",method, uri, version);
-	request.method = method;
-	request.uri = uri;
-	request.version = version;
-	print_info(TAG,"uri:%s  version:%s",request.uri,request.version);
-	return request;
+	request.method = strdup(method);
+	request.uri = strdup(uri);
+	request.version = strdup(version);
+	print_info(TAG,"uri:%d version:%d",strlen(request.uri),strlen(request.version));
+	//if(data != NULL) free(data);
+	return &request;
 }
 
-HttpResponse generateHttpResponse(HttpRequest  request)	{
-	HttpResponse response;
-	char *uri;
+HttpResponse generateHttpResponse(HttpRequest  * request)	{
+	static HttpResponse response;
+	char * uri;
 	
+	//printf("generateHttpResponse \n");
+	//printf("request->uri %s request->version %s \n",request->uri,request->version);
+	print_info(TAG,"request->uri %s request->version %s",request->uri,request->version);
+	response.version = request->version;
+	uri = request->uri;
 	//response.version = request->version;
-	uri = strdup(request.uri);
-	response.version = strdup(request.version);
-	print_info(TAG,"generateHttpResponse %s request->version %s",response.version,request.version);
+	//printf("uri %s response.version %s",uri,response.version);
+	print_info(TAG,"uri %s response.version %s",uri,response.version);
 	if(!strcmp(uri,"/"))	{
-		print_info(TAG,"index is exist %d",IsFileExist("/index.html"));
-		if(IsFileExist("/index.html") || IsFileExist("/index.htm"))	{
+		print_info(TAG,"index is exist %d",IsFileExist("index.html"));
+		if(IsFileExist("index.html") || IsFileExist("index.htm"))	{
 			response.statusCode = 200;
 			response.statusCodeDef ="OK";
-			response.fileName = "/index.html";
+			response.fileName = "index.html";
 			
 		}else {
 			print_info(TAG,"file is not exist");
 			response.statusCode = 404;
 			response.statusCodeDef = "NOT FOUND";
-			response.fileName = "/404.html";
+			response.fileName = "404.html";
 		}
 	}else if(IsFileExist(uri))	{
 		response.statusCode = 200;

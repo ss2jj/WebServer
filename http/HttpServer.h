@@ -64,10 +64,10 @@ void writeMessage(int fd,char * data);
 /**
 *解析Http请求
 */
-HttpRequest parseHttpRequest(char *data);
+HttpRequest * parseHttpRequest(char *data);
 
 /**
 *生成http回应头
 */
-HttpResponse generateHttpResponse(HttpRequest  request);
+HttpResponse generateHttpResponse(HttpRequest  * request);
 #endif

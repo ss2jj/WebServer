@@ -2,7 +2,7 @@
 #include "Log.h"
 #include <sys/stat.h>
 #include <unistd.h>
-
+#include <errno.h>
 #define TAG "FILEOPERATOR"
 
 int FileRead(const char *fileName,const char *mode,char *buf,size_t len) {
@@ -114,12 +114,15 @@ int IsFileExist(const char *filename)	{
        return 0;                                                                                                                                               
     }
           
-    if((fp = fopen(filename,"r+")) == NULL) {
+    /**if((fp = fopen(filename,"r")) == NULL) {
         print_error(TAG,"file open failed");                                                                                                                    
         return 0;
-    }
+    }**/
 	
-	int result = fstat(fp,&buf);
-	
+	int result = stat(filename,&buf);
+	if(result != 0)	{
+		print_info(TAG,"error %d",errno);    
+	}
+	//print_info(TAG,"result %d",result);    
 	return result==0?1:0;
 }
