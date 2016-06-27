@@ -79,7 +79,7 @@ static void * handleHttpRequest(int fd,struct sockaddr_in clientAddr)	{
 
 	char * data = NULL;
 	HttpRequest * request;
-	HttpResponse response ;
+	HttpResponse * response ;
 	
 	print_info(TAG,"HandleHttpRequest fd %d",fd);
 	data = readMessage(fd);
@@ -88,7 +88,7 @@ static void * handleHttpRequest(int fd,struct sockaddr_in clientAddr)	{
 	print_info(TAG,"uri:%s  version:%s",request->uri,request->version);
 	printf("uri2:%s  version2:%s",request->uri,request->version);
 	response = generateHttpResponse(request);
-	handleHttpResponse(fd,&response);
+	handleHttpResponse(fd,response);
 }
 
 static char * getMimeType(char * dot)	{
@@ -208,21 +208,19 @@ HttpRequest * parseHttpRequest(char *data)	{
 	request.uri = strdup(uri);
 	request.version = strdup(version);
 	print_info(TAG,"uri:%d version:%d",strlen(request.uri),strlen(request.version));
-	//if(data != NULL) free(data);
+	
 	return &request;
 }
 
-HttpResponse generateHttpResponse(HttpRequest  * request)	{
+HttpResponse * generateHttpResponse(HttpRequest  * request)	{
 	static HttpResponse response;
 	char * uri;
 	
-	//printf("generateHttpResponse \n");
-	//printf("request->uri %s request->version %s \n",request->uri,request->version);
+	
 	print_info(TAG,"request->uri %s request->version %s",request->uri,request->version);
 	response.version = request->version;
 	uri = request->uri;
-	//response.version = request->version;
-	//printf("uri %s response.version %s",uri,response.version);
+	
 	print_info(TAG,"uri %s response.version %s",uri,response.version);
 	if(!strcmp(uri,"/"))	{
 		print_info(TAG,"index is exist %d",IsFileExist("index.html"));
@@ -237,20 +235,26 @@ HttpResponse generateHttpResponse(HttpRequest  * request)	{
 			response.statusCodeDef = "NOT FOUND";
 			response.fileName = "404.html";
 		}
-	}else if(IsFileExist(uri))	{
-		response.statusCode = 200;
-		response.statusCodeDef = "OK";
-		response.fileName = uri ;
-	}else {
-		response.statusCode = 404;
-		response.statusCodeDef = "NOT FOUND";
-		response.fileName = "/404.html";
+	}else	{
+		uri = uri + 1;
+		if(IsFileExist(uri))	{
+			response.statusCode = 200;
+			response.statusCodeDef = "OK";
+			response.fileName = uri ;
+		}else {
+			response.statusCode = 404;
+			response.statusCodeDef = "NOT FOUND";
+			response.fileName = "404.html";
+		}
+		
 	}
+		
 	
 	response.contentLen = FileSize(response.fileName);
 	response.contentType = getMimeType(strchr(response.fileName,'.'));
 	print_info(TAG,"generateHttpResponse end");
-	return response;
+	
+	return &response;
 	
 	
 }
