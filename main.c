@@ -6,14 +6,32 @@
 #include "Log.h"
 
 #define PORT_NUM "port"
+#define WORK_DIR "workdir"
 #define CONFIG_PATH "config.xml"
 #define TAG "MAIN"
+#define DEFAULT_PORT "8080"
 int main(int argc,char ** argv)	{
 	char port_c[50];
+	char workDir[50];
 	int port_i;
 	
     /*1 读取端口配置文件 初始化httpd进程*/
-	ReadConfig(CONFIG_PATH,PORT_NUM,port_c);
+	if(ReadConfig(CONFIG_PATH,PORT_NUM,port_c) == 0)	{
+		print_error(TAG,"read port error");
+		
+		strcpy(port_c,DEFAULT_PORT);
+	}
+	
+	if(ReadConfig(CONFIG_PATH,WORK_DIR,workDir) == 1)	{
+		print_info(TAG,"change current dir to  %s",workDir);
+		char cmd[100] = "cd ";
+		strcat(cmd,workDir);
+		print_info(TAG,"cmd  %s",cmd);
+		//system(cmd);
+		int i = chdir(workDir);
+		print_info(TAG,"cnange  %d",i);
+		
+	}
 	
 	port_i = atoi(port_c);
 	

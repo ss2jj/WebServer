@@ -13,7 +13,7 @@
 
 /**
 *  从指定路径文件中读取某个配置
-*  失败返回0 
+*  失败返回0  成功返回1
 *    
 **/
 int ReadConfig(const char *filename,const char * name,char *value);

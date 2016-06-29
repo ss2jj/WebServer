@@ -81,31 +81,33 @@ static int parseString(char * sources,Map * maps)	{
 int ReadConfig(const char *filename,const char * name,char *value)	{
 	char * readBUF = NULL;
 	Map maps[BUFFER_SIZE];
+	int result = 0;
 	int index = 0;
 	int i =0;
 	if(name == NULL)	{
 		print_error(TAG,"file name is null");
-		return 0;
+		return result;
 	}
 	if(value == NULL)	{
 		print_error(TAG,"file name is null");
-		return 0;
+		return result;
 	}
 	
 	readBUF =  (char *)malloc(BUFFER_SIZE);
 	if(readBUF == NULL)	{
 		print_error(TAG,"malloc buffer error");
-		return 0;
+		return result;
 	}
 	memset(readBUF,0,BUFFER_SIZE);
 	FileRead(filename,"r",readBUF,BUFFER_SIZE); //读取文件到buf buf最大支持1024
 	memset(maps,0,BUFFER_SIZE*sizeof(Map));
 	index = parseString(readBUF,maps);   //解析键值对
 	
-	while(i < index && index < BUFFER_SIZE)	{
+	while(i < index )	{
 		
 		if(strcmp(name,maps[i].key) == 0)	{
 			strncpy(value,maps[i].value,strlen(maps[i].value)+1);
+			result = 1;
 			break; 	
 		}
 		i++;
@@ -116,7 +118,7 @@ int ReadConfig(const char *filename,const char * name,char *value)	{
 		free(readBUF);
 	}
 	
-	return index;	
+	return result;	
 }
 
 

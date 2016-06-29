@@ -64,13 +64,14 @@ static void * handleHttpResponse(int fd,HttpResponse * response)	{
 		return ;
 	}
 	
+	memset(data,0,response->contentLen);
 	FileRead(response->fileName,"r",data,response->contentLen); //读取文件到buf buf最大支持1024
 	
 	print_info(TAG,"response data: %s",data);
 	
 	writeMessage(fd,data);
 	
-	if(data == NULL)	{
+	if(data != NULL)	{
 		free(data);
 		return ;
 	}
