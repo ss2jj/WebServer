@@ -54,7 +54,7 @@ static void * handleHttpResponse(int fd,HttpResponse * response)	{
 	
 	print_info(TAG,"response head: %s",head);
 	
-	writeMessage(fd,head);
+	writeMessage(fd,head,-1);
 	
 	data = (char *) malloc(response->contentLen);
 	
@@ -65,11 +65,11 @@ static void * handleHttpResponse(int fd,HttpResponse * response)	{
 	}
 	
 	memset(data,0,response->contentLen);
-	FileRead(response->fileName,"r",data,response->contentLen); //读取文件到buf buf最大支持1024
+	FileRead(response->fileName,"rb+",data,response->contentLen); //读取文件到buf buf最大支持1024
 	
-	print_info(TAG,"response data: %s",data);
+	//print_info(TAG,"response data: %s",data);
 	
-	writeMessage(fd,data);
+	writeMessage(fd,data,response->contentLen);
 	
 	if(data != NULL)	{
 		free(data);
@@ -187,10 +187,15 @@ char * readMessage(int fd)	{
 	return strdup(data);
 }
 
-void writeMessage(int fd,char * data)	{
-	int size = strlen(data);
-
+void writeMessage(int fd,char * data,int size)	{
+	
+	if(size == -1)	{
+		size = strlen(data);
+	}
+	
+	
 	send(fd, data, size, 0);
+	print_info(TAG,"writeMessage over");
 }
 //解析Http请求
 HttpRequest * parseHttpRequest(char *data)	{

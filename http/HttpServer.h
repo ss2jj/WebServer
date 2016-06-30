@@ -60,7 +60,7 @@ char * readMessage(int fd);
 /**
 * 往fd写入数据
 */
-void writeMessage(int fd,char * data);
+void writeMessage(int fd,char * data,int size);
 /**
 *解析Http请求
 */

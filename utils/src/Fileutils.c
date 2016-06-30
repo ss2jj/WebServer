@@ -33,12 +33,14 @@ int FileRead(const char *fileName,const char *mode,char *buf,size_t len) {
        if((readSize = fread(buf+totalRead,1,len-totalRead,fp)) <= 0) {
             print_info(TAG,"read error or complete");
             break;   
-        }
+        }else {
+			print_info(TAG,"read continue %d",readSize);
+		}
 		
         totalRead += readSize;
         
     }
-
+	print_info(TAG,"read over");
     fclose(fp);
     return totalRead;
 

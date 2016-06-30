@@ -27,9 +27,7 @@ int main(int argc,char ** argv)	{
 		char cmd[100] = "cd ";
 		strcat(cmd,workDir);
 		print_info(TAG,"cmd  %s",cmd);
-		//system(cmd);
-		int i = chdir(workDir);
-		print_info(TAG,"cnange  %d",i);
+		chdir(workDir);   //更改当前工作目录;
 		
 	}
 	
