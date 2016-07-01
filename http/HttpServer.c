@@ -127,6 +127,10 @@ int StartServer(int port_i)	{
 	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serverAddr.sin_port = htons(port_i);
 	
+	//设置端口可重复使用
+	int opt = 1;
+	setsockopt(listenfd,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
+	
 	if(bind(listenfd,(struct sockaddr *)&serverAddr,sizeof(serverAddr)) == -1)	{
 		print_error(TAG,"socket bind failed");
 		return -1;
@@ -257,7 +261,7 @@ HttpResponse * generateHttpResponse(HttpRequest  * request)	{
 		
 	
 	response.contentLen = FileSize(response.fileName);
-	response.contentType = getMimeType(strchr(response.fileName,'.'));
+	response.contentType = getMimeType(strrchr(response.fileName,'.'));
 	print_info(TAG,"generateHttpResponse end");
 	
 	return &response;
