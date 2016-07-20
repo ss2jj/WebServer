@@ -8,6 +8,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+
+
 typedef struct Param_S 	{
 	int fd;
 	struct sockaddr_in clientAddr;
@@ -55,19 +57,37 @@ int StartServer(int port_i);
 /**
 * 从fd读取数据
 */
-char * readMessage(int fd);
+char * ReadMessage(int fd);
 
 /**
 * 往fd写入数据
 */
-void writeMessage(int fd,char * data,int size);
+void WriteMessage(int fd,char * data,int size);
 /**
 *解析Http请求
 */
-HttpRequest * parseHttpRequest(char *data);
+HttpRequest * ParseHttpRequest(char *data);
 
 /**
 *生成http回应头
 */
-HttpResponse * generateHttpResponse(HttpRequest  * request);
+HttpResponse * GenerateHttpResponse(HttpRequest  * request);
+
+/**
+* 处理http请求
+**/
+void HandleHttpRequest(int fd,struct sockaddr_in clientAddr);
+/**
+*处理http回应
+**/
+void  HandleHttpResponse(int fd,HttpResponse * response);
+
+/**
+*销毁资源
+**/
+
+void HandleHttpRequest();
+
+
+
 #endif

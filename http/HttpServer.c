@@ -16,6 +16,7 @@
 #define TRUE 1
 #define FALSE 0
 
+//数字转为字符串
 static void itoa(int i,char*string)	{
       int power,j;
       j=i;
@@ -28,8 +29,71 @@ static void itoa(int i,char*string)	{
        }
       *string='\0';
 }
+//获取mimetype
+static char * getMimeType(char * dot)	{
+	int i =0;
+	char * defaultType = "text/html";
+	MimeMap * type = mimeTypes;
+	while(type->extension != NULL)	{
+		if (strcmp(type->extension, dot) == 0) {
+				return type->mimeType;
+		}
+		type++;
+	}
+	return defaultType;
+	
+}
+
+
+//资源销毁
+static void destoryHttp(char * data,HttpRequest * request, HttpResponse * response)	{
+	if(data != NULL)	{
+		free(data);
+	}
+
+	if(request->method != NULL)	{
+		free(request->method);
+	}
+	
+	if(request->uri!= NULL)	{
+		free(request->uri);
+	}
+
+	if(request->version!= NULL)	{
+		free(request->version);
+	}
+	
+	if(request != NULL)	{
+
+		//free(request);
+	}
+
+	/**if(response->version != NULL)	{
+		free(response->version);
+	}
+
+	if(response->statusCodeDef!= NULL)	{
+		free(response->statusCodeDef);
+	}
+
+	if(response->fileName!= NULL)	{
+		free(response->fileName);
+	}
+
+	if(response->contentType!= NULL)	{
+		free(response->contentType);
+	}
+
+	if(response!= NULL)	{
+		//free(response);
+	}**/
+	
+
+	
+	
+}
 	 
-static void * handleHttpResponse(int fd,HttpResponse * response)	{
+void  HandleHttpResponse(int fd,HttpResponse * response)	{
 	char  head[1024] = {0};
 	char  num[20];
 	char * data;
@@ -54,7 +118,7 @@ static void * handleHttpResponse(int fd,HttpResponse * response)	{
 	
 	print_info(TAG,"response head: %s",head);
 	
-	writeMessage(fd,head,-1);
+	WriteMessage(fd,head,-1);
 	
 	data = (char *) malloc(response->contentLen);
 	
@@ -65,46 +129,35 @@ static void * handleHttpResponse(int fd,HttpResponse * response)	{
 	}
 	
 	memset(data,0,response->contentLen);
-	FileRead(response->fileName,"rb+",data,response->contentLen); //读取文件到buf buf最大支持1024
+	FileRead(response->fileName,"rb+",data,response->contentLen); //读取文件到buf 
 	
 	//print_info(TAG,"response data: %s",data);
 	
-	writeMessage(fd,data,response->contentLen);
+	WriteMessage(fd,data,response->contentLen);
 	
 	if(data != NULL)	{
 		free(data);
 		return ;
 	}
 }
-static void * handleHttpRequest(int fd,struct sockaddr_in clientAddr)	{
+void  HandleHttpRequest(int fd,struct sockaddr_in clientAddr)	{
 
 	char * data = NULL;
 	HttpRequest * request;
 	HttpResponse * response ;
 	
 	print_info(TAG,"HandleHttpRequest fd %d",fd);
-	data = readMessage(fd);
+	data = ReadMessage(fd);
 	print_info(TAG,"readMessage %s",data);
-	request = parseHttpRequest(data);
+	request = ParseHttpRequest(data);
 	print_info(TAG,"uri:%s  version:%s",request->uri,request->version);
-	printf("uri2:%s  version2:%s",request->uri,request->version);
-	response = generateHttpResponse(request);
-	handleHttpResponse(fd,response);
+	response = GenerateHttpResponse(request);
+	HandleHttpResponse(fd,response);
+
+	destoryHttp(data,request,response);
 }
 
-static char * getMimeType(char * dot)	{
-	int i =0;
-	char * defaultType = "text/html";
-	MimeMap * type = mimeTypes;
-	while(type->extension != NULL)	{
-		if (strcmp(type->extension, dot) == 0) {
-				return type->mimeType;
-		}
-		type++;
-	}
-	return defaultType;
-	
-}
+
 /*启动服务端
 * 失败返回 -1
 */
@@ -155,23 +208,18 @@ int StartServer(int port_i)	{
 			print_error(TAG,"fork failed");
 			exit(1);
 		}else if(pid == 0)	{
-			//close(listenfd);
-			handleHttpRequest(clientfd,clientAddr);
+			
+			HandleHttpRequest(clientfd,clientAddr);
 			close(clientfd);
 		}else {
 			close(clientfd);
 		}
 		
-		//close(clientfd);
-		
-		//print_info(TAG,"receive request from %s",inet_ntoa(clientAddr.sin_addr));
-		//int err = pthread_create(&ntid,NULL,HandleHttpRequest,(void *)&p);
-		
 	}
 	
 }
 
-char * readMessage(int fd)	{
+char * ReadMessage(int fd)	{
 	 char  data[MAXLENGTH];
 	int readSize  = 0;
 	
@@ -191,7 +239,7 @@ char * readMessage(int fd)	{
 	return strdup(data);
 }
 
-void writeMessage(int fd,char * data,int size)	{
+void WriteMessage(int fd,char * data,int size)	{
 	
 	if(size == -1)	{
 		size = strlen(data);
@@ -202,7 +250,7 @@ void writeMessage(int fd,char * data,int size)	{
 	print_info(TAG,"writeMessage over");
 }
 //解析Http请求
-HttpRequest * parseHttpRequest(char *data)	{
+HttpRequest * ParseHttpRequest(char *data)	{
 	static HttpRequest request;
 	
 	char method[LINE_MAX] = {0};
@@ -218,11 +266,13 @@ HttpRequest * parseHttpRequest(char *data)	{
 	request.uri = strdup(uri);
 	request.version = strdup(version);
 	print_info(TAG,"uri:%d version:%d",strlen(request.uri),strlen(request.version));
+
+
 	
 	return &request;
 }
 
-HttpResponse * generateHttpResponse(HttpRequest  * request)	{
+HttpResponse * GenerateHttpResponse(HttpRequest  * request)	{
 	static HttpResponse response;
 	char * uri;
 	
@@ -232,8 +282,8 @@ HttpResponse * generateHttpResponse(HttpRequest  * request)	{
 	uri = request->uri;
 	
 	print_info(TAG,"uri %s response.version %s",uri,response.version);
-	if(!strcmp(uri,"/"))	{
-		print_info(TAG,"index is exist %d",IsFileExist("index.html"));
+	if(!strcmp(uri,"/"))	{ //请求当前目录index页面
+		
 		if(IsFileExist("index.html") || IsFileExist("index.htm"))	{
 			response.statusCode = 200;
 			response.statusCodeDef ="OK";
@@ -246,7 +296,7 @@ HttpResponse * generateHttpResponse(HttpRequest  * request)	{
 			response.fileName = "404.html";
 		}
 	}else	{
-		uri = uri + 1;
+		uri = uri + 1; //跳过'/'
 		if(IsFileExist(uri))	{
 			response.statusCode = 200;
 			response.statusCodeDef = "OK";
