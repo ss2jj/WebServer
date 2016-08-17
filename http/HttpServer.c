@@ -62,13 +62,13 @@ static void destoryHttp(char * data,HttpRequest * request, HttpResponse * respon
 	if(request->version!= NULL)	{
 		free(request->version);
 	}
-	
+	/**
 	if(request != NULL)	{
 
 		//free(request);
 	}
 
-	/**if(response->version != NULL)	{
+	if(response->version != NULL)	{
 		free(response->version);
 	}
 
@@ -107,7 +107,7 @@ void  HandleHttpResponse(int fd,HttpResponse * response)	{
 	 strcat(head," "); //空格
 	 strcat(head,response->statusCodeDef); //状态描述符
 	 strcat(head,"\r\n"); //换行符
-	  itoa(response->contentLen,num);
+	 itoa(response->contentLen,num);
 	 strcat(head,"Content-Length:");
 	 strcat(head,num);
 	 strcat(head,"\r\n"); //换行符
@@ -143,8 +143,8 @@ void  HandleHttpResponse(int fd,HttpResponse * response)	{
 void  HandleHttpRequest(int fd,struct sockaddr_in clientAddr)	{
 
 	char * data = NULL;
-	HttpRequest * request;
-	HttpResponse * response ;
+	HttpRequest * request = NULL;
+	HttpResponse * response = NULL;
 	
 	print_info(TAG,"HandleHttpRequest fd %d",fd);
 	data = ReadMessage(fd);
@@ -278,10 +278,10 @@ HttpResponse * GenerateHttpResponse(HttpRequest  * request)	{
 	
 	
 	print_info(TAG,"request->uri %s request->version %s",request->uri,request->version);
+	
+	memset(&response, 0, sizeof(HttpResponse));
 	response.version = request->version;
 	uri = request->uri;
-	
-	print_info(TAG,"uri %s response.version %s",uri,response.version);
 	if(!strcmp(uri,"/"))	{ //请求当前目录index页面
 		
 		if(IsFileExist("index.html") || IsFileExist("index.htm"))	{

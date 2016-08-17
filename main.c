@@ -15,7 +15,7 @@ int main(int argc,char ** argv)	{
 	char workDir[50];
 	int port_i;
 	
-    /*1 读取端口配置文件 初始化httpd进程*/
+        /*1 读取端口配置文件 初始化httpd进程*/
 	if(ReadConfig(CONFIG_PATH,PORT_NUM,port_c) == 0)	{
 		print_error(TAG,"read port error");
 		
@@ -34,10 +34,9 @@ int main(int argc,char ** argv)	{
 	port_i = atoi(port_c);
 	
 	/*2 设置服务器应答回调*/
-	//SetHttpServerCallBack();
 	
 	print_info(TAG,"read port is %d",port_i);
-    /*3 启动httpd进程*/
+       /*3 启动httpd进程*/
 	
 	StartServer(port_i);
 	

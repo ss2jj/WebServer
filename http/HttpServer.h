@@ -86,7 +86,7 @@ void  HandleHttpResponse(int fd,HttpResponse * response);
 *Ïú»Ù×ÊÔ´
 **/
 
-void HandleHttpRequest();
+void DestoryHttpRequest();
 
 
 
