@@ -16,6 +16,21 @@
 #define TRUE 1
 #define FALSE 0
 
+
+
+MimeMap mimeTypes[] = {
+	{".css", "text/css"},
+	{".gif", "image/gif"},
+	{".htm", "text/html"},
+	{".html", "text/html"},
+	{".jpeg", "image/jpeg"},
+	{".jpg", "image/jpeg"},
+	{".js", "application/javascript"},
+	{".png", "image/png"},
+	{".xml", "text/xml"},
+	{NULL, NULL}
+};
+
 //数字转为字符串
 static void itoa(int i,char*string)	{
       int power,j;
@@ -93,12 +108,12 @@ static void destoryHttp(char * data,HttpRequest * request, HttpResponse * respon
 	
 }
 	 
-void  HandleHttpResponse(int fd,HttpResponse * response)	{
+void  SendHttpResponse(int fd,HttpResponse * response)	{
 	char  head[1024] = {0};
 	char  num[20];
 	char * data;
 	
-	print_info(TAG,"handleHttpResponse");
+	print_info(TAG,"SendHttpResponse");
 	 strcat(head,response->version); //添加协议名
 	 print_info(TAG,"response head: %s version: %s",head,response->version);
 	 strcat(head," "); //空格
@@ -152,7 +167,7 @@ void  HandleHttpRequest(int fd,struct sockaddr_in clientAddr)	{
 	request = ParseHttpRequest(data);
 	print_info(TAG,"uri:%s  version:%s",request->uri,request->version);
 	response = GenerateHttpResponse(request);
-	HandleHttpResponse(fd,response);
+	SendHttpResponse(fd,response);
 
 	destoryHttp(data,request,response);
 }
@@ -317,4 +332,32 @@ HttpResponse * GenerateHttpResponse(HttpRequest  * request)	{
 	return &response;
 	
 	
+}
+
+
+void SendHttpRequest(int fd,HttpRequest * request)	{
+ 	char  head[1024] = {0};
+        int i =0;
+
+	strcat(head,request->method); //请求方法
+        strcat(head," "); //空格
+        strcat(head,request->uri); //uri
+        strcat(head," "); //空格
+        strcat(head,request->version); //状态描述符
+        strcat(head,"\r\n"); //换行符
+
+	HttpOption * option = request->options;
+	if(option != NULL && request->optionsize != 0)	{
+	   while(i < request->optionsize)	{
+	       strcat(head,option[i].key);
+	       strcat(head,": ");
+	       strcat(head,option[i].value);
+	       strcat(head,"\r\n");
+	       i++;
+	   }		
+	
+	}
+	
+	WriteMessage(fd,head,-1);	
+
 }

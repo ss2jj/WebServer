@@ -15,10 +15,17 @@ typedef struct Param_S 	{
 	struct sockaddr_in clientAddr;
 } Param;
 
+typedef struct HttpOption_S{
+	char * key;
+	char * value;
+} HttpOption;
+
 typedef struct HttpRequest_S	{
 	char * method;
 	char * uri;
 	char * version;
+	HttpOption * options;
+	int optionsize;
 } HttpRequest;
 
 typedef struct HttpResponse_S	{
@@ -31,23 +38,14 @@ typedef struct HttpResponse_S	{
 } HttpResponse;
 
 
+
+
 typedef struct {
 	char * extension;
 	char * mimeType;
 } MimeMap;
 
-MimeMap mimeTypes[] = {
-	{".css", "text/css"},
-	{".gif", "image/gif"},
-	{".htm", "text/html"},
-	{".html", "text/html"},
-	{".jpeg", "image/jpeg"},
-	{".jpg", "image/jpeg"},
-	{".js", "application/javascript"},
-	{".png", "image/png"},
-	{".xml", "text/xml"},
-	{NULL, NULL}
-};
+
 
 /*启动服务端
 * 失败返回 -1
@@ -80,8 +78,12 @@ void HandleHttpRequest(int fd,struct sockaddr_in clientAddr);
 /**
 *处理http回应
 **/
-void  HandleHttpResponse(int fd,HttpResponse * response);
+void  SendHttpResponse(int fd,HttpResponse * response);
 
+/**
+*发送http请求
+**/
+void  SendHttpRequest(int fd,HttpRequest * request);
 /**
 *销毁资源
 **/
