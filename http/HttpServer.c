@@ -349,6 +349,7 @@ void SendHttpRequest(int fd,HttpRequest * request)	{
 	HttpOption * option = request->options;
 	if(option != NULL && request->optionsize != 0)	{
 	   while(i < request->optionsize)	{
+		   print_info(TAG,"key : %s  value %s",option[i].key,option[i].value);
 	       strcat(head,option[i].key);
 	       strcat(head,": ");
 	       strcat(head,option[i].value);
@@ -360,4 +361,5 @@ void SendHttpRequest(int fd,HttpRequest * request)	{
 	
 	WriteMessage(fd,head,-1);	
 
+	
 }

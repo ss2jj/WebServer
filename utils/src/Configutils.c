@@ -5,13 +5,10 @@
 
 #define TAG "CONFIGOPERATOR"
 #define BUFFER_SIZE  1024
-#define MAX_LENGTH 50
+
 #define PARSE_TAG '=' 
 
-typedef struct S_Map	{
-	char key[MAX_LENGTH];
-	char value[MAX_LENGTH];
-} Map;
+
 
 static int parseString(char * sources,Map * maps)	{
 	char * temp1;
@@ -77,7 +74,42 @@ static int parseString(char * sources,Map * maps)	{
 	
 	return index;
 }
-
+void  ReadConfigMap(const char * filename,Map * maps,int index)	{
+	
+	
+	char * readBUF = NULL;
+	int total = 0;
+	int i = 0;
+	Map temp[BUFFER_SIZE];
+	memset(temp,0,BUFFER_SIZE*sizeof(Map));
+	
+	readBUF =  (char *)malloc(BUFFER_SIZE);
+	if(readBUF == NULL)	{
+		print_error(TAG,"malloc buffer error");
+		return ;
+	}
+	
+	memset(readBUF,0,BUFFER_SIZE);
+	FileRead(filename,"r",readBUF,BUFFER_SIZE); //读取文件到buf buf最大支持1024
+	total = parseString(readBUF,temp);   //解析键值对
+	
+	int length = total - index;
+	
+	
+	if(index != 0)	{
+		for(i=0;i<length;i++)	{
+			strcpy(maps[i].key,temp[index+i].key);
+			strcpy(maps[i].value,temp[index+i].value);
+		}
+	
+	}
+	
+	if(readBUF != NULL)	{
+		free(readBUF);
+	}
+	
+	
+}
 int ReadConfig(const char *filename,const char * name,char *value)	{
 	char * readBUF = NULL;
 	Map maps[BUFFER_SIZE];

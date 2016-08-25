@@ -9,7 +9,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
+#define MAX_LENGTH 500
+typedef struct S_Map	{
+	char key[MAX_LENGTH];
+	char value[MAX_LENGTH];
+} Map;
 
 /**
 *  从指定路径文件中读取某个配置
@@ -26,8 +30,11 @@ int ReadConfig(const char *filename,const char * name,char *value);
 **/
 int WriteConfig(const char *filename,const char * name,char *value);
 
-
-
+/**
+*返回键值对
+*index 从index出开始
+**/
+void  ReadConfigMap(const char * filename,Map * maps,int index);
 
 
 

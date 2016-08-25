@@ -29,13 +29,14 @@ int FileWrite(const char *filename,const char *mode,char *buf,size_t len);
 
 /**
 * 获取指定文件大小
-*
+*失败返回-1 成功返回文件大小
 **/
 int FileSize(const char *filename);
 
 
 /**
 *指定的文件或者文件夹是否存在
+*成功返回1 失败返回0
 **/
 
 int IsFileExist(const char *filename);

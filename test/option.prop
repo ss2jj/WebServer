@@ -1,0 +1,7 @@
+method=post
+uri=/test/pic/bottom061.png
+version=HTTP/1.1
+optionsize=3
+Accept=image/png, image/svg+xml, image/*;q=0.8, */*;q=0.5"
+Accept-Language=zh-CN
+User-Agent=Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko
